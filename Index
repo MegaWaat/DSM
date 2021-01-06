@@ -1,0 +1,80 @@
+const bodyParser = require('body-parser')  
+const express = require("express");
+const app = express();
+const mysql = require("mysql");
+const cors = require("cors");
+
+app.use(cors());
+app.use(express.json());
+
+const db = mysql.createPool({
+  user: "root",
+  host: "localhost",
+  password: "u1n9e1",
+  database: "dsm",
+});
+
+
+app.post("/create", (req, res) => {
+  const {criNome, criEmail, criAvatarUrl, } = req.body;
+  console.log(req.body)
+  db.query(
+    "INSERT INTO dsm.crianca (nomecri, emailcri, avatarcri,) VALUES (?,?,?)",
+    [criNome, criEmail, criAvatarUrl,],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Valores inseridos");
+      }
+    }
+  );
+});
+
+ app.get("/crianca", (req, res) => {
+  db.query("SELECT * FROM dsm.crianca", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+ 
+app.put("/update", (req, res) => {
+  const criId = req.body;
+  
+  db.query(
+    "UPDATE rec.crianca WHERE id = ?",
+    [criId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.delete("/delete/:id", (req, res) => {
+  const criId = req.body.id;
+  console.log(req.body)
+  db.query("DELETE FROM dsm.crianca WHERE idcri = ?", [criId], (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+    
+  });
+});
+
+app.listen(3001, () => {console.log("servidor rodando");});
+
+//TESTE DE INSERT
+/*  app.get('/', (req, res) => {const slqInsert = "INSERT INTO dsm.crianca (nomecri,observacaocri) VALUES ('matheus','vermelho');";
+db.query(slqInsert,(err,result)=>{
+  res.send('enviado')
+  });
+});  */
